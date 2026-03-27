@@ -1,6 +1,9 @@
 import os
 import logging
 from datetime import datetime, timezone
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 

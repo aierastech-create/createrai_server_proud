@@ -5,6 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from graph.builder import graph
 from models.request import GenerateRequest, GenerateResponse
 from db.mongo import save_history
+from db.user_repo import ensure_indexes
+from routes.user import router as user_router
 
 # ─── Logging ─────────────────────────────────────────────
 logging.basicConfig(
@@ -30,10 +32,20 @@ app.add_middleware(
 )
 
 
+# ─── Startup ─────────────────────────────────────────────
+@app.on_event("startup")
+def startup_event():
+    ensure_indexes()
+
+
 # ─── Health Check ─────────────────────────────────────────
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "CreatorAI API"}
+
+
+# ─── Auth Routes ─────────────────────────────────────────
+app.include_router(user_router)
 
 
 # ─── Generate Endpoint ───────────────────────────────────
